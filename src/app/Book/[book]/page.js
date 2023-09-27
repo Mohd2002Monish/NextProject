@@ -27,7 +27,7 @@ import Fade from "@mui/material/Fade";
 
 import { useRouter } from "next/navigation";
 import { Grid } from "@mui/joy";
-function page({ params }) {
+function Page({ params }) {
   const [found, setFound] = useState(false);
   const [book, setBook] = useState({});
   const [open, setOpen] = useState(false);
@@ -312,4 +312,4 @@ function page({ params }) {
   );
 }
 
-export default page;
+export default Page;
