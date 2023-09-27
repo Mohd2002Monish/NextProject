@@ -1,95 +1,290 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import React, { useEffect, useState } from "react";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import BookCard from "../Components/BookCard";
+import axios from "axios";
+import Button from "@mui/joy/Button";
+import List from "@mui/joy/List";
+import ListItem from "@mui/joy/ListItem";
 
-export default function Home() {
+import FormLabel from "@mui/joy/FormLabel";
+import Switch from "@mui/joy/Switch";
+import Modal from "@mui/joy/Modal";
+import ModalDialog from "@mui/joy/ModalDialog";
+import ModalClose from "@mui/joy/ModalClose";
+import DialogTitle from "@mui/joy/DialogTitle";
+
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+const App = () => {
+  const [found, setFound] = useState(false);
+  const [layout, setLayout] = React.useState(undefined);
+  const [scroll, setScroll] = React.useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [books, setBooks] = useState([]);
+  const [bookData, setBookData] = useState({
+    authorName: "",
+    authorBiography: "",
+    authorNationality: "",
+    authorBirthDate: "",
+    title: "",
+    coverImage: "",
+    genre: "Fantasy",
+    publicationDate: "2023-09-08",
+    isFree: false,
+  });
+  const FetchData = async () => {
+    setFound(false);
+    try {
+      const response = await axios.get(
+        `https://wednesday-qcez.onrender.com/books?page=${currentPage}`
+      );
+
+      const { data } = response;
+      setFound(true);
+      setBooks(data);
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(bookData);
+    axios
+      .post(`https://wednesday-qcez.onrender.com/books`, bookData)
+      .then((response) => {
+        console.log("POST request successful", response.data);
+        setLayout(undefined);
+        FetchData();
+      })
+      .catch((error) => {
+        console.error("Error making POST request:", error);
+      });
+  };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    if (name === "isFree") {
+      setBookData({ ...bookData, [name]: event.target.value === "true" });
+    } else {
+      setBookData({ ...bookData, [name]: value });
+    }
+  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 3;
+
+  const handlePreviousPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+  useEffect(() => {
+    FetchData();
+  }, [currentPage]);
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
+    <div>
+      {found ? (
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              margin: "20px",
+            }}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            <Button
+              variant="outlined"
+              color="neutral"
+              onClick={() => {
+                setLayout("center");
+              }}
+            >
+              Add New Book
+            </Button>
+            <Modal
+              open={!!layout}
+              onClose={() => {
+                setLayout(undefined);
+              }}
+            >
+              <ModalDialog layout={layout}>
+                <ModalClose />
+
+                <FormControl
+                  orientation="horizontal"
+                  sx={{
+                    bgcolor: "background.level2",
+                    p: 1,
+                    borderRadius: "sm",
+                  }}
+                >
+                  <FormLabel>New Book Detail's</FormLabel>
+                </FormControl>
+                <List
+                  sx={{
+                    overflow: scroll ? "scroll" : "initial",
+                    mx: "calc(-1 * var(--ModalDialog-padding))",
+                    px: "var(--ModalDialog-padding)",
+                  }}
+                >
+                  <form onSubmit={handleSubmit}>
+                    <TextField
+                      name="authorName"
+                      label="Author Name"
+                      variant="outlined"
+                      fullWidth
+                      onChange={handleChange}
+                    />
+
+                    <TextField
+                      sx={{ marginTop: "20px" }}
+                      name="authorBiography"
+                      label="Author Biography"
+                      variant="outlined"
+                      fullWidth
+                      onChange={handleChange}
+                    />
+
+                    <TextField
+                      sx={{ marginTop: "20px" }}
+                      name="authorNationality"
+                      label="Nationality"
+                      variant="outlined"
+                      fullWidth
+                      onChange={handleChange}
+                    />
+
+                    <TextField
+                      sx={{ marginTop: "20px" }}
+                      name="authorBirthDate"
+                      label="Birth Date"
+                      type="date"
+                      variant="outlined"
+                      fullWidth
+                      onChange={handleChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+
+                    <TextField
+                      sx={{ marginTop: "20px" }}
+                      name="title"
+                      label="Title"
+                      variant="outlined"
+                      fullWidth
+                      onChange={handleChange}
+                    />
+
+                    <TextField
+                      sx={{ marginTop: "20px" }}
+                      name="coverImage"
+                      label="Cover Image URL"
+                      variant="outlined"
+                      fullWidth
+                      onChange={handleChange}
+                    />
+
+                    <FormControl sx={{ marginTop: "20px" }} fullWidth>
+                      <InputLabel>Genre</InputLabel>
+                      <Select
+                        name="genre"
+                        onChange={handleChange}
+                        label="Genre"
+                      >
+                        <MenuItem value="Fantasy">Fantasy</MenuItem>
+                        <MenuItem value="Science Fiction">
+                          Science Fiction
+                        </MenuItem>
+                        <MenuItem value="Mystery">Mystery</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <FormControl
+                      sx={{ marginTop: "20px" }}
+                      component="fieldset"
+                      fullWidth
+                    >
+                      <RadioGroup name="isFree" onChange={handleChange}>
+                        <FormControlLabel
+                          value="true"
+                          control={<Radio />}
+                          label="Free"
+                        />
+                        <FormControlLabel
+                          value="false"
+                          control={<Radio />}
+                          label="Not Free"
+                        />
+                      </RadioGroup>
+                    </FormControl>
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                    >
+                      Submit
+                    </Button>
+                  </form>
+                </List>
+              </ModalDialog>
+            </Modal>
+          </div>
+          <Grid container spacing={2}>
+            {books.map((book) => (
+              <Grid key={book._id} item xs={12} sm={6} md={4} lg={3}>
+                <BookCard book={book} />
+              </Grid>
+            ))}
+          </Grid>
+          <Grid
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+            item
+            xs={12}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </Grid>
         </div>
-      </div>
+      ) : (
+        <h1 style={{ textAlign: "center" }}>Loading...</h1>
+      )}
+    </div>
+  );
+};
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default App;
