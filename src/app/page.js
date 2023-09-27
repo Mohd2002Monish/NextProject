@@ -6,14 +6,12 @@ import BookCard from "../Components/BookCard";
 import axios from "axios";
 import Button from "@mui/joy/Button";
 import List from "@mui/joy/List";
-import ListItem from "@mui/joy/ListItem";
 
 import FormLabel from "@mui/joy/FormLabel";
-import Switch from "@mui/joy/Switch";
+
 import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
 import ModalClose from "@mui/joy/ModalClose";
-import DialogTitle from "@mui/joy/DialogTitle";
 
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -26,7 +24,7 @@ const App = () => {
   const [found, setFound] = useState(false);
   const [layout, setLayout] = React.useState(undefined);
   const [scroll, setScroll] = React.useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+
   const [books, setBooks] = useState([]);
   const [bookData, setBookData] = useState({
     authorName: "",
@@ -39,6 +37,8 @@ const App = () => {
     publicationDate: "2023-09-08",
     isFree: false,
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 3;
   const FetchData = async () => {
     setFound(false);
     try {
@@ -77,8 +77,6 @@ const App = () => {
       setBookData({ ...bookData, [name]: value });
     }
   };
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 3;
 
   const handlePreviousPage = () => {
     setCurrentPage(currentPage - 1);

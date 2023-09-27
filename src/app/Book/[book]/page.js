@@ -8,13 +8,6 @@ import {
   CardMedia,
   Button,
   TextField,
-  Select,
-  FormControlLabel,
-  Radio,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  RadioGroup,
 } from "@mui/material";
 const style = {
   position: "absolute",
