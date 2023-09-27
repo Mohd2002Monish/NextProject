@@ -72,20 +72,6 @@ function Page({ params }) {
     setOpen(false);
   };
 
-  const FetchData = async () => {
-    setFound(false);
-    try {
-      const response = await axios.get(
-        `https://wednesday-qcez.onrender.com/book/${params.book}`
-      );
-      const { data } = response;
-      setBook(data);
-      setBookData(data);
-      setFound(true);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
   const removeBook = (id) => {
     axios
       .delete(`https://wednesday-qcez.onrender.com/book/${id}`)
@@ -99,8 +85,22 @@ function Page({ params }) {
   };
 
   useEffect(() => {
+    const FetchData = async () => {
+      setFound(false);
+      try {
+        const response = await axios.get(
+          `https://wednesday-qcez.onrender.com/book/${params.book}`
+        );
+        const { data } = response;
+        setBook(data);
+        setBookData(data);
+        setFound(true);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
     FetchData();
-  }, [FetchData]);
+  }, []);
   return (
     <div>
       {found ? (
