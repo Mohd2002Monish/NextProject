@@ -100,7 +100,7 @@ function Page({ params }) {
       }
     };
     FetchData();
-  }, []);
+  }, [found]);
   return (
     <div>
       {found ? (
