@@ -26,7 +26,7 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 
 import { useRouter } from 'next/navigation';
-import { Grid, List } from '@mui/joy';
+import { List } from '@mui/joy';
 function Page({ params }) {
   const [layout, setLayout] = React.useState(undefined);
 
@@ -76,6 +76,7 @@ function Page({ params }) {
 
   const handleClose = () => {
     setOpen(false);
+    setLayout(undefined);
   };
 
   const removeBook = (id) => {
