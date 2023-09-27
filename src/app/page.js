@@ -49,7 +49,6 @@ const App = () => {
       const { data } = response;
       setFound(true);
       setBooks(data);
-      console.log(response);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

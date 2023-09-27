@@ -100,7 +100,7 @@ function Page({ params }) {
 
   useEffect(() => {
     FetchData();
-  }, []);
+  }, [FetchData]);
   return (
     <div>
       {found ? (
